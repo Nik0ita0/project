@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дослідження МЗР з матрицею станів над GF(7)</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="#introduction">Вступ</a></li>
+                <li><a href="#matrix">Матриця станів</a></li>
+                <li><a href="#gf7">Кінцеве поле GF(7)</a></li>
+                <li><a href="#example">Приклад</a></li>
+                <li><a href="#interface">Інтерфейс</a></li>
+                <li><a href="#conclusion">Висновок</a></li>
+            </ul>
+        </nav>
+        <h1>Дослідження МЗР з матрицею станів над GF(7)</h1>
+    </header>
+    <div class="container">
+        <section id="introduction">
+            <h2>Вступ</h2>
+            <p>Цей сайт присвячений дослідженню матричного зсувного регістру (МЗР) з матрицею станів над кінцевим полем GF(7). Ми розглянемо основні принципи, структуру та приклади використання.</p>
+        </section>
+        <section id="matrix">
+            <h2>Матриця станів</h2>
+            <p>Матриця станів представляє зсуви для кожного біта в МЗР. Кожен рядок матриці визначає новий стан для відповідного біта в залежності від поточного стану всіх бітів.</p>
+            <div id="stateMatrixContainer">
+                <p>Приклад матриці станів:</p>
+                <table id="stateMatrix">
+                    <tr>
+                        <td>1</td>
+                        <td>0</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                    </tr>
+                    <tr>
+                        <td>0</td>
+                        <td>0</td>
+                        <td>1</td>
+                    </tr>
+                </table>
+            </div>
+            <div>
+                <p>Введіть матрицю станів (по рядкам, розділяючи елементи комами, а рядки - крапкою з комою):</p>
+                <input type="text" id="inputMatrix" value="0,1,0;0,0,1;1,1,1">
+                <button onclick="updateMatrix()">Оновити матрицю</button>
+            </div>
+        </section>
+        <section id="gf7">
+            <h2>Кінцеве поле GF(7)</h2>
+            <p>Кінцеве поле GF(7) (Galois Field) - це набір з 7 елементів, де всі арифметичні операції виконуються за модулем 7. Це означає, що результат будь-якої операції виводиться як остача від ділення на 7.</p>
+            <p>Основні операції в GF(7):</p>
+            <ul>
+                <li>Додавання: (a + b) % 7</li>
+                <li>Множення: (a * b) % 7</li>
+                <li>Віднімання: (a - b + 7) % 7</li>
+                <li>Ділення: (a * b^(-1)) % 7, де b^(-1) - мультиплікативне обернення b в GF(7)</li>
+            </ul>
+        </section>
+        <section id="example">
+            <h2>Приклад використання</h2>
+            <p>Введіть початковий стан регістру:</p>
+            <input type="text" id="initialState" value="1,2,3">
+            <button onclick="calculateNextState()">Обчислити новий стан</button>
+            <p id="newState">Новий стан: </p>
+        </section>
+        <section id="interface">
+            <h2>Інтерфейс</h2>
+            <ol>
+                <li>Значення порядків матриць F, A і B – L, n та m відповідно
+                    <div>
+                        <label for="matrixOrders">Введіть порядки матриць (L, n, m):</label>
+                        <input type="text" id="matrixOrders" placeholder="L, n, m">
+                    </div>
+                </li>
+                <li>Коефіцієнти обраних поліномів f<sub>F</sub>(x), f<sub>A</sub>(x) і f<sub>B</sub>(x) або самі поліноми
+                    <div>
+                        <label for="polynomials">Введіть поліноми (f<sub>F</sub>(x), f<sub>A</sub>(x), f<sub>B</sub>(x)):</label>
+                        <input type="text" id="polynomials" placeholder="fF(x), fA(x), fB(x)">
+                    </div>
+                </li>
+                <li>Структурні матриці F, A і B та їх теоретичні і експериментальні періоди T<sub>F</sub>, T<sub>A</sub> і T<sub>B</sub>
+                    <div>
+                        <label for="structuralMatrices">Введіть структурні матриці (F, A, B):</label>
+                        <input type="text" id="structuralMatrices" placeholder="F;A;B">
+                    </div>
+                    <div>
+                        <label for="periods">Введіть періоди (T<sub>F</sub>, T<sub>A</sub>, T<sub>B</sub>):</label>
+                        <input type="text" id="periods" placeholder="TF, TA, TB">
+                    </div>
+                </li>
+                <li>Матриці, обернені до матриць F, A і B
+                    <div>
+                        <label for="inverseMatrices">Введіть обернені матриці (F<sup>-1</sup>, A<sup>-1</sup>, B<sup>-1</sup>):</label>
+                        <input type="text" id="inverseMatrices" placeholder="F^-1;A^-1;B^-1">
+                    </div>
+                </li>
+                <li>Ранг матриці початкових станів МЗР і самі початкові стани у вигляді нормальної форми Сміту
+                    <div>
+                        <label for="initialStateMatrix">Введіть початкові стани (матриця):</label>
+                        <input type="text" id="initialStateMatrix" placeholder="matrix">
+                    </div>
+                    <div>
+                        <button onclick="calculateSmithNormalForm()">Обчислити нормальну форму Сміту</button>
+                        <p id="smithForm">Нормальна форма Сміту: </p>
+                    </div>
+                </li>
+                <li>Номер елементу (комірки) матриці (i, j), з якого буде отримуватися ПВП-послідовність
+                    <div>
+                        <label for="elementPosition">Введіть номер елементу (i, j):</label>
+                        <input type="text" id="elementPosition" placeholder="i, j">
+                    </div>
+                </li>
+                <li>Стан генераторів
+                    <div>
+                        <button onclick="displayGeneratorState()">Показати стан генераторів</button>
+                        <p id="generatorState">Стан генераторів: </p>
+                    </div>
+                </li>
+                <li>Спектр ваг Хеммінгу; отриманий експериментально та аналітично
+                    <div>
+                        <button onclick="calculateHammingWeights()">Обчислити спектр ваг Хеммінгу</button>
+                        <p id="hammingWeights">Спектр ваг Хеммінгу: </p>
+                    </div>
+                </li>
+                <li>Графіки циклічних АКФ
+                    <div>
+                        <button onclick="displayACFGraphs()">Показати графіки АКФ</button>
+                        <div id="acfGraphs"></div>
+                    </div>
+                </li>
+                <li>Засоби керування роботою застосунку
+                    <div>
+                        <label for="controlMethods">Введіть засоби керування:</label>
+                        <input type="text" id="controlMethods" placeholder="методи">
+                    </div>
+                </li>
+            </ol>
+        </section>
+        <section id="conclusion">
+            <h2>Висновок</h2>
+            <p>Матриця станів та кінцеве поле GF(7) мають важливе значення у криптографії та теорії кодування. Вони забезпечують надійні методи обробки та збереження інформації. Знання про ці структури дозволяє створювати ефективні алгоритми для шифрування, дешифрування та перевірки цілісності даних.</p>
+            <p>Також важливо розуміти властивості та характеристики цих структур для розробки нових криптографічних систем, які можуть протистояти сучасним загрозам у сфері інформаційної безпеки.</p>
+        </section>
+    </div>
+    <script src="111.js"></script>
+</body>
+</html>
