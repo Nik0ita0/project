@@ -25,50 +25,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function generateStructuralMatrix(size, mod, matrixA, matrixB, matrixElementS, rankS0) {
-        const matrix = [];
-        for (let i = 0; i < size; i++) {
-            const row = [];
-            for (let j = 0; j < size; j++) {
-                // Example logic to generate matrix based on provided inputs
-                row.push((matrixA * i + matrixB * j + matrixElementS) % mod);
-            }
-            matrix.push(row);
-        }
-        return matrix;
-    }
-
-    function generateInverseMatrix(matrix, mod) {
-        // Placeholder logic for generating the inverse of the matrix
-        // Implement proper matrix inversion logic as needed
-        const size = matrix.length;
-        const inverseMatrix = [];
-        for (let i = 0; i < size; i++) {
-            const row = [];
-            for (let j = 0; j < size; j++) {
-                row.push((mod - matrix[i][j]) % mod); // Simplified logic for demonstration
-            }
-            inverseMatrix.push(row);
-        }
-        return inverseMatrix;
-    }
-
     window.generateMatrices = function() {
-        const matrixA = parseInt(document.getElementById('matrixA').value);
-        const matrixB = parseInt(document.getElementById('matrixB').value);
-        const matrixElementS = parseInt(document.getElementById('matrixElementS').value);
-        const rankS0 = parseInt(document.getElementById('rankS0').value);
-        const matrixSize = parseInt(document.getElementById('matrixSize').value);
-        const modulus = parseInt(document.getElementById('modulus').value);
-
-        const structuralMatrix = generateStructuralMatrix(matrixSize, modulus, matrixA, matrixB, matrixElementS, rankS0);
-        const inverseStructuralMatrix = generateInverseMatrix(structuralMatrix, modulus);
-
+        const matrixSize = document.getElementById('matrixSize').value;
+        const modulus = document.getElementById('modulus').value;
+        
+        const structuralMatrix = generateMatrix(matrixSize, modulus);
+        const inverseStructuralMatrix = generateMatrix(matrixSize, modulus); // Placeholder for actual inverse calculation
+        
         renderMatrix(structuralMatrix, 'structuralMatrix');
         renderMatrix(inverseStructuralMatrix, 'inverseStructuralMatrix');
     }
 });
-
-
-
-
