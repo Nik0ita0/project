@@ -3,74 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Матрична</title>
+    <title>Matrix Generator</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="111.js" defer></script>
 </head>
 <body>
     <header>
+        <h1>SequenceGen</h1>
         <nav>
             <ul>
-                <li"><a href="Lbs.html" class="button">Лінійна</a></li>
-                <li><a href="Matrix.html" class="button">Матрична</a></li>
+                <li><a href="#">Linear</a></li>
+                <li><a href="#">Matrix</a></li>
             </ul>
         </nav>
     </header>
     <div class="container">
-        <section id="interface">
-            <h2>Інтерфейс</h2>
-            
-            <!-- Ввод значений порядков матриц F, A и B -->
-            <div>
-               
-            </div>
-
-            <!-- Ввод коэффициентов выбранных полиномов -->
-            <div>
-
-            </div>
-
-            <!-- Ввод структурных матриц F, A и B -->
-            <div>
-
-            </div>
-
-            <!-- Ввод обратных матриц -->
-            <div>
-
-            </div>
-
-            <!-- Ввод начального состояния в виде нормальной формы Смита -->
-            <div>
-
-            </div>
-
-            <!-- Ввод элемента матрицы для получения ПВП-последовательности -->
-            <div>
-
-            </div>
-
-            <!-- Ввод начального состояния генераторов -->
-            <div>
-
-            </div>
-
-            <!-- Ввод для расчета спектра весов Хемминга -->
-            <div>
-
-            </div>
-
-            <!-- Ввод для отображения графиков циклических АКФ -->
-            <div>
-
-            </div>
-
-            <!-- Ввод для управления режимами работы -->
-            <div>
-
-            </div>
-
-        </section>
+        <h2>Matrix Generator</h2>
+        <form id="matrixForm">
+            <label for="matrixSize">Matrix Size:</label>
+            <input type="number" id="matrixSize" name="matrixSize" value="10" min="1">
+            <label for="modulus">Modulus:</label>
+            <input type="number" id="modulus" name="modulus" value="7" min="1">
+            <button type="button" onclick="generateMatrices()">Generate</button>
+        </form>
+        <div id="matricesContainer">
+            <h3>Structural Matrix</h3>
+            <table id="structuralMatrix"></table>
+            <h3>Inverse Structural Matrix</h3>
+            <table id="inverseStructuralMatrix"></table>
+        </div>
     </div>
+    <script src="111.js"></script>
 </body>
 </html>
