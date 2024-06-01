@@ -32,49 +32,41 @@ nav ul li a {
     margin: 20px auto;
     padding: 20px;
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
-h2, h3 {
+h2 {
     color: #333;
 }
 
-form {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
 }
 
-form label {
-    margin: 10px 0 5px;
-}
-
-form input {
-    padding: 5px;
-    margin-bottom: 10px;
-    width: 100px;
-}
-
-form button {
-    padding: 10px 20px;
-    background-color: #333;
+.button {
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
     color: #fff;
+    background-color: #222;
     border: none;
-    cursor: pointer;
-}
-
-form button:hover {
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+.button:hover {
+   background-color: #535353;
+ }
+.button:active {
     background-color: #555;
-}
+  }
+.button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+#newState, #smithForm, #generatorState, #hammingWeights {
+    font-weight: bold;
     margin-top: 20px;
-}
-
-table, th, td {
-    border: 1px solid #333;
-    text-align: center;
-    padding: 8px;
 }
