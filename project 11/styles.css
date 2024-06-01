@@ -45,17 +45,26 @@ input[type="text"] {
     margin: 10px 0;
 }
 
-button {
-    padding: 10px 20px;
-    background-color: #333;
+.button {
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
     color: #fff;
+    background-color: #222;
     border: none;
-    cursor: pointer;
-}
-
-button:hover {
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+.button:hover {
+   background-color: #535353;
+ }
+.button:active {
     background-color: #555;
-}
+  }
+.button:disabled {
+    background-color: #cccccc;
+    cursor: not-allowed;
+  }
 
 #newState, #smithForm, #generatorState, #hammingWeights {
     font-weight: bold;
