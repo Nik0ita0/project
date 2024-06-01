@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Дослідження МЗР з матрицею станів над GF(7)</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="111.js" defer></script>
+    <script src="linear.js" defer></script>
 </head>
 <body>
     <header>
@@ -18,12 +18,61 @@
         <h1>Дослідження МЗР з матрицею станів над GF(7)</h1>
     </header>
     <div class="container">
-        <section id="interface">
-            <h2>Інтерфейс</h2>
-            
-            
-
-        </section>
+        <main>
+            <div class="input-section">
+                <label for="matrixSize">Matrix Size</label>
+                <input type="number" id="matrixSize" value="10">
+                
+                <label for="initialState">Initial State</label>
+                <input type="text" id="initialState" value="1">
+                
+                <button id="calculateButton">Calculate</button>
+            </div>
+            <div class="matrix-section">
+                <div class="matrix" id="structureMatrix">
+                    <h3>Structure Matrix</h3>
+                    <!-- Matrix goes here -->
+                </div>
+                <div class="matrix" id="invertedMatrix">
+                    <h3>Inverted Structure Matrix</h3>
+                    <!-- Matrix goes here -->
+                </div>
+                <div class="matrix" id="generatorState">
+                    <h3>Generator State</h3>
+                    <!-- Matrix goes here -->
+                </div>
+            </div>
+            <div class="sequence-section">
+                <label for="sequence">Sequence</label>
+                <input type="text" id="sequence" readonly>
+                
+                <label for="binarySequence">Binary Sequence</label>
+                <input type="text" id="binarySequence" readonly>
+            </div>
+            <div class="results-section">
+                <div class="result">
+                    <h3>Real Period</h3>
+                    <p id="realPeriod">1023</p>
+                </div>
+                <div class="result">
+                    <h3>Theoretical Period</h3>
+                    <p id="theoreticalPeriod">1023</p>
+                </div>
+                <div class="result">
+                    <h3>Hamming Weight</h3>
+                    <p id="hammingWeight">512</p>
+                </div>
+                <div class="result">
+                    <h3>Polynomial</h3>
+                    <p id="polynomial">x^3 + x^0</p>
+                </div>
+            </div>
+            <div class="chart-section">
+                <h3>Chart</h3>
+                <canvas id="chart"></canvas>
+            </div>
+        </main>
+    </div>
     </div>
 </body>
 </html>
