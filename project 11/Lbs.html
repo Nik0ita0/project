@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Дослідження МЗР з матрицею станів над GF(7)</title>
+    <title></title>
     <link rel="stylesheet" href="styles.css">
     <script src="linear.js" defer></script>
 </head>
@@ -15,31 +15,32 @@
                 <li><a href="Matrix.html" class="button">Матрична</a></li>
             </ul>
         </nav>
-        <h1>Дослідження МЗР з матрицею станів над GF(7)</h1>
     </header>
     <div class="container">
         <main>
             <div class="input-section">
-                <label for="matrixSize">Matrix Size</label>
-                <input type="number" id="matrixSize" value="10">
-                
+                <label for="matrixSize">Matrix Size (Степень)</label>
+                <input type="number" id="matrixSize" value="3" min="1" max="15">
+
+                <label for="polynomialSelect">Полином</label>
+                <select id="polynomialSelect">
+
+                </select>
+
                 <label for="initialState">Initial State</label>
                 <input type="text" id="initialState" value="1">
                 
-                <button id="calculateButton">Calculate</button>
+                <button id="calculateButton" class="button">Calculate</button>
             </div>
             <div class="matrix-section">
+                <h3>Structure Matrix</h3>
                 <div class="matrix" id="structureMatrix">
-                    <h3>Structure Matrix</h3>
-                    <!-- Matrix goes here -->
                 </div>
+                <h3>Inverted Structure Matrix</h3>
                 <div class="matrix" id="invertedMatrix">
-                    <h3>Inverted Structure Matrix</h3>
-                    <!-- Matrix goes here -->
                 </div>
+                <h3>Generator State</h3>
                 <div class="matrix" id="generatorState">
-                    <h3>Generator State</h3>
-                    <!-- Matrix goes here -->
                 </div>
             </div>
             <div class="sequence-section">

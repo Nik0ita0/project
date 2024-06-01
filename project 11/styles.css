@@ -96,3 +96,51 @@ canvas {
     width: 100%;
     height: 300px;
 }
+
+.input-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    align-items: center;
+}
+
+.input-section label {
+    margin-right: 10px;
+}
+
+.input-section input,
+.input-section select,
+.input-section button {
+    margin-right: 20px;
+    padding: 5px 10px;
+    font-size: 1em;
+}
+
+.matrix-section,
+.sequence-section,
+.results-section,
+.chart-section {
+    margin-top: 20px;
+}
+
+.matrix {
+    margin-bottom: 20px;
+}
+
+.result {
+    margin-bottom: 10px;
+}
+
+#matrixSize,
+#polynomialSelect {
+    width: 120px;
+}
+
+#initialState {
+    width: 200px;
+}
+
+#sequence,
+#binarySequence {
+    width: calc(100% - 20px);
+}
