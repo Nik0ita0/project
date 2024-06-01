@@ -1,4 +1,3 @@
-// Функция для умножения матрицы на вектор с модулем
 function multiplyMatrixVector(matrix, vector, mod) {
     return matrix.map(row => {
         return row.reduce((sum, value, index) => {
@@ -8,11 +7,11 @@ function multiplyMatrixVector(matrix, vector, mod) {
 }
 
 // Обновление матрицы состояний
-function updateMatrix() {
-    const inputMatrix = document.getElementById('inputMatrix').value;
+function updateMatrix(matrixId, containerId) {
+    const inputMatrix = document.getElementById(matrixId).value;
     const rows = inputMatrix.split(';').map(row => row.split(',').map(Number));
 
-    const matrixContainer = document.getElementById('stateMatrix');
+    const matrixContainer = document.getElementById(containerId);
     matrixContainer.innerHTML = '';
 
     rows.forEach(row => {
@@ -41,34 +40,34 @@ function calculateNextState() {
 
 // Функция для вычисления нормальной формы Смит
 function calculateSmithNormalForm() {
-    // Пример функции для вычисления нормальной формы Смит
-    // Необходимо заменить реальной реализацией
     const initialStateMatrix = document.getElementById('initialStateMatrix').value;
-    // Логика вычисления нормальной формы Смит
-    const smithForm = "Нормальная форма Смит";
+    const smithForm = "Нормальная форма Смит"; // Пример логики
     document.getElementById('smithForm').innerText = smithForm;
 }
 
 // Функция для отображения состояния генераторов
 function displayGeneratorState() {
-    // Пример функции для отображения состояния генераторов
-    // Необходимо заменить реальной реализацией
-    const generatorState = "Состояние генераторов";
+    const generatorStateInput = document.getElementById('generatorStateInput').value;
+    const generatorState = "Состояние генераторов: " + generatorStateInput; // Пример логики
     document.getElementById('generatorState').innerText = generatorState;
 }
 
 // Функция для вычисления спектра весов Хемминга
 function calculateHammingWeights() {
-    // Пример функции для вычисления спектра весов Хемминга
-    // Необходимо заменить реальной реализацией
-    const hammingWeights = "Спектр весов Хемминга";
+    const hammingWeights = "Спектр весов Хемминга"; // Пример логики
     document.getElementById('hammingWeights').innerText = hammingWeights;
 }
 
 // Функция для отображения графиков циклических АКФ
 function displayACFGraphs() {
-    // Пример функции для отображения графиков АКФ
-    // Необходимо заменить реальной реализацией
     const acfGraphsContainer = document.getElementById('acfGraphs');
-    acfGraphsContainer.innerHTML = '<p>Графики АКФ будут здесь</p>';
+    acfGraphsContainer.innerHTML = '<p>Графики АКФ будут здесь</p>'; // Пример логики
+}
+
+function stepByStepIteration() {
+    alert("Покрокова ітерація виконується"); // Пример логики
+}
+
+function automaticMode() {
+    alert("Автоматичний режим виконується"); // Пример логики
 }
