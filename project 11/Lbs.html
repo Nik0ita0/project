@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Matrix Generator</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="linear.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="111.js" defer></script>
 </head>
 <body>
     <header>
@@ -19,61 +20,73 @@
     <div class="container">
         <main>
             <div class="input-section">
-                <label for="matrixSize">Matrix Size (Степень)</label>
-                <input type="number" id="matrixSize" value="3" min="1" max="15">
+                <label for="degree">Matrix Size (Степень)</label>
+                <input type="number" id="degree" value="3" min="1" max="15">
 
-                <label for="polynomialSelect">Полином</label>
-                <select id="polynomialSelect">
+                <label for="degree2">Additional Matrix Size (Степень 2)</label>
+                <input type="number" id="degree2" value="3" min="1" max="15">
 
+                <label for="polynomial">Полином</label>
+                <select id="polynomial">
+                    <option value="1 23F">1 23F</option>
+                    <option value="3 37D">3 37D</option>
+                    <!-- Add more polynomial options as needed -->
                 </select>
 
                 <label for="initialState">Initial State</label>
                 <input type="text" id="initialState" value="1">
-                
-                <button id="calculateButton" class="button">Calculate</button>
+
+                <button id="generateButton" class="button">Calculate</button>
+                <button id="increaseDegreeButton" class="button">Increase Degree</button>
             </div>
             <div class="matrix-section">
-                <h3>Structure Matrix</h3>
-                <div class="matrix" id="structureMatrix">
-                </div>
-                <h3>Inverted Structure Matrix</h3>
-                <div class="matrix" id="invertedMatrix">
-                </div>
-                <h3>Generator State</h3>
-                <div class="matrix" id="generatorState">
-                </div>
+                <h3></h3>
+                <div class="matrix" id="matrixA"></div>
+                <h3></h3>
+                <div class="matrix" id="matrixB"></div>
+                <h3></h3>
+                <div class="matrix" id="inverseMatrixA"></div>
+                <h3></h3>
+                <div class="matrix" id="inverseMatrixB"></div>
             </div>
             <div class="sequence-section">
-                <label for="sequence">Sequence</label>
+                <label for="sequence">Последовательность</label>
                 <input type="text" id="sequence" readonly>
                 
-                <label for="binarySequence">Binary Sequence</label>
+                <label for="binarySequence">Бинарная последовательность</label>
                 <input type="text" id="binarySequence" readonly>
             </div>
             <div class="results-section">
                 <div class="result">
-                    <h3>Real Period</h3>
-                    <p id="realPeriod">1023</p>
+                    <h3>Поліном А</h3>
+                    <p id="polynomialA"></p>
                 </div>
                 <div class="result">
-                    <h3>Theoretical Period</h3>
+                    <h3>Поліном В</h3>
+                    <p id="polynomialB"></p>
+                </div>
+                <div class="result">
+                    <h3>Період Т(А)</h3>
+                    <p id="periodA"></p>
+                </div>
+                <div class="result">
+                    <h3>Теоретичний період</h3>
                     <p id="theoreticalPeriod">1023</p>
                 </div>
                 <div class="result">
-                    <h3>Hamming Weight</h3>
-                    <p id="hammingWeight">512</p>
+                    <h3>Реальний період</h3>
+                    <p id="realPeriod">1023</p>
                 </div>
                 <div class="result">
-                    <h3>Polynomial</h3>
-                    <p id="polynomial">x^3 + x^0</p>
+                    <h3>Вес Хэмминга</h3>
+                    <p id="hammingWeight">512</p>
                 </div>
             </div>
-            <div class="chart-section">
-                <h3>Chart</h3>
-                <canvas id="chart"></canvas>
+            <div class="acf-chart-section">
+                <h3>Графік АЦФ</h3>
+                <canvas id="acfChart"></canvas>
             </div>
         </main>
-    </div>
     </div>
 </body>
 </html>
