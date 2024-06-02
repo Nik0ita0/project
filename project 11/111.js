@@ -34,12 +34,12 @@ function generateMatrices() {
     document.getElementById('hammingWeight').textContent = hammingWeight;
     document.getElementById('polynomialDisplay').textContent = polynomial;
 
-    // Display additional fields
+    // Displaying additional fields
     document.getElementById('polynomialA').textContent = polynomial; // Assuming polynomial A is the same as selected polynomial
     document.getElementById('polynomialB').textContent = polynomial; // Assuming polynomial B is the same as selected polynomial
     document.getElementById('periodA').textContent = realPeriod; // Assuming Period T(A) is the real period calculated
 
-    drawChart(sequence);
+    drawACFChart(binarySequence);
 }
 
 function generateMatrixA(degree, polynomial) {
@@ -115,17 +115,17 @@ function calculateHammingWeight(binarySequence) {
     return binarySequence.reduce((sum, bit) => sum + bit, 0);
 }
 
-function drawChart(sequence) {
-    // Implementation for drawing the chart
+function drawACFChart(sequence) {
+    const acf = calculateACF(sequence);
     const ctx = document.getElementById('acfChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: sequence.map((_, index) => index + 1),
+            labels: acf.map((_, index) => index),
             datasets: [{
                 label: 'ACF',
-                data: sequence,
-                borderColor: 'rgba(75, 192, 192, 1)',
+                data: acf,
+                borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1,
                 fill: false,
                 lineTension: 0
@@ -138,17 +138,36 @@ function drawChart(sequence) {
                     display: true,
                     title: {
                         display: true,
-                        text: 'Index'
+                        text: 'Lag'
                     }
                 },
                 y: {
                     display: true,
                     title: {
                         display: true,
-                        text: 'Value'
+                        text: 'ACF'
                     }
                 }
             }
         }
     });
 }
+
+function calculateACF(sequence) {
+    const n = sequence.length;
+    const mean = sequence.reduce((acc, val) => acc + val, 0) / n;
+    const acf = [];
+
+    for (let lag = 0; lag < n; lag++) {
+        let sum = 0;
+        for (let i = 0; i < n - lag; i++) {
+            sum += (sequence[i] - mean) * (sequence[i + lag] - mean);
+        }
+        acf.push(sum / (n - lag));
+    }
+    return acf;
+}
+
+
+
+
