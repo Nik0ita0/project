@@ -1,87 +1,117 @@
 document.getElementById('calculateButton').addEventListener('click', function() {
-    // Fetch input values
-    let matrixSize = document.getElementById('matrixSize').value;
-    let initialState = document.getElementById('initialState').value;
-    
-    // Perform calculations (Placeholder)
-    // Example function to generate matrices and sequences
-    function generateMatrix(size) {
-        let matrix = [];
-        for (let i = 0; i < size; i++) {
-            let row = [];
-            for (let j = 0; j < size; j++) {
-                row.push(Math.floor(Math.random() * 2));
-            }
-            matrix.push(row);
+    let matrixSize = parseInt(document.getElementById('matrixSize').value);
+    let initialState = document.getElementById('initialState').value.split('').map(Number);
+
+    if (isNaN(matrixSize) || matrixSize <= 0) {
+        alert("Введите корректный размер матрицы.");
+        return;
+    }
+
+    if (initialState.some(isNaN)) {
+        alert("Введите корректное начальное состояние.");
+        return;
+    }
+
+    function parsePolynomial(poly) {
+        return poly.split(' ').map(term => parseInt(term, 16));
+    }
+
+    function createMatrix(poly, size) {
+        const matrix = Array(size).fill(null).map(() => Array(size).fill(0));
+        poly.forEach((term, index) => {
+            if (index < size) matrix[0][index] = term;
+        });
+        for (let i = 1; i < size; i++) {
+            matrix[i][i - 1] = 1;
         }
         return matrix;
     }
-    
-    // Update matrices (Placeholder)
-    let structureMatrix = generateMatrix(matrixSize);
-    let invertedMatrix = generateMatrix(matrixSize);
-    let generatorState = generateMatrix(matrixSize);
-    
-    // Update the DOM with the new matrices
-    function updateMatrixDOM(matrix, elementId) {
-        let matrixElement = document.getElementById(elementId);
-        matrixElement.innerHTML = '';
-        matrix.forEach(row => {
-            let rowElement = document.createElement('div');
-            rowElement.textContent = row.join(' ');
-            matrixElement.appendChild(rowElement);
-        });
-    }
-    
-    updateMatrixDOM(structureMatrix, 'structureMatrix');
-    updateMatrixDOM(invertedMatrix, 'invertedMatrix');
-    updateMatrixDOM(generatorState, 'generatorState');
-    
-    // Update sequences (Placeholder)
-    document.getElementById('sequence').value = '0110101...';
-    document.getElementById('binarySequence').value = '0110101...';
-    
-    // Update results (Placeholder)
-    document.getElementById('realPeriod').textContent = '1023';
-    document.getElementById('theoreticalPeriod').textContent = '1023';
-    document.getElementById('hammingWeight').textContent = '512';
-    document.getElementById('polynomial').textContent = 'x^3 + x^0';
-    
-    // Update chart (Placeholder)
-    let ctx = document.getElementById('chart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: Array.from({length: 500}, (_, i) => i + 1),
-            datasets: [{
-                label: 'ADC Chart',
-                data: Array.from({length: 500}, () => Math.random() - 0.5),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1,
-                fill: false
-            }]
-        },
-        options: {
-            scales: {
-                x: {display: true},
-                y: {display: true}
+
+    function invertMatrix(matrix) {
+        const size = matrix.length;
+        const identity = Array(size).fill(null).map((_, i) => Array(size).fill(0).map((_, j) => i === j ? 1 : 0));
+        const augmented = matrix.map((row, i) => [...row, ...identity[i]]);
+
+        for (let i = 0; i < size; i++) {
+            let maxRow = i;
+            for (let k = i + 1; k < size; k++) {
+                if (Math.abs(augmented[k][i]) > Math.abs(augmented[maxRow][i])) {
+                    maxRow = k;
+                }
+            }
+            [augmented[i], augmented[maxRow]] = [augmented[maxRow], augmented[i]];
+
+            const pivot = augmented[i][i];
+            if (pivot === 0) {
+                alert("Матрица не является обратимой.");
+                return null;
+            }
+            for (let j = 0; j < 2 * size; j++) {
+                augmented[i][j] /= pivot;
+            }
+
+            for (let k = 0; k < size; k++) {
+                if (k === i) continue;
+                const factor = augmented[k][i];
+                for (let j = 0; j < 2 * size; j++) {
+                    augmented[k][j] -= factor * augmented[i][j];
+                }
             }
         }
-    });
+
+        return augmented.map(row => row.slice(size));
+    }
+
+    function multiplyMatrixVector(matrix, vector) {
+        return matrix.map(row => row.reduce((sum, value, index) => sum + value * vector[index], 0));
+    }
+
+    function calculateGeneratorState(initialState, matrix) {
+        const stateVector = initialState.map(Number);
+        return multiplyMatrixVector(matrix, stateVector);
+    }
+
+    function displayMatrix(matrix, container) {
+        container.innerHTML = '';
+        const table = document.createElement("table");
+        matrix.forEach(row => {
+            const tr = document.createElement("tr");
+            row.forEach(cell => {
+                const td = document.createElement("td");
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            table.appendChild(tr);
+        });
+        container.appendChild(table);
+    }
+
+    const polynomial = document.getElementById('polynomialSelect').value;
+    const parsedPolynomial = parsePolynomial(polynomial);
+    const structureMatrix = createMatrix(parsedPolynomial, matrixSize);
+    const invertedMatrix = invertMatrix(structureMatrix);
+
+    if (invertedMatrix === null) {
+        return;
+    }
+
+    const generatorState = calculateGeneratorState(initialState, structureMatrix);
+
+    displayMatrix(structureMatrix, document.getElementById('structureMatrix'));
+    displayMatrix(invertedMatrix, document.getElementById('invertedMatrix'));
+    displayMatrix([generatorState], document.getElementById('generatorState'));
 });
-
-
 
 document.addEventListener("DOMContentLoaded", function () {
     const polynomials = {
         1: ["1H"],
-        2: ["1 13F", "3 13F", "5 07"],
-        3: ["1 23F", "3 37D", "5 07"],
-        4: ["1 45E", "3 75G", "5 67H"],
-        5: ["1 103F", "3 127B", "5 147H", "7 111A", "9 015"],
-        6: ["1 155E", "3 127B", "5 147H", "7 111A", "9 015"],
-        7: ["1 211E", "3 217E", "5 235E", "7 367H", "9 277E", "11 325G", "13 203F", "15 313H", "21 349G"],
-        8: ["1 43B9E", "3 56E7H", "5 763D", "7 551E", "9 675C", "11 747H", "13 435F", "15 727D", "17 023", "19 545E", "21 613D", "23 015", "25 103F", "27 477B", "29 617H", "31 003"],
+        2: ["1 7H"],
+        3: ["1 13F"],
+        4: ["1 23F", "3 37D", "5 07"],
+        5: ["1 45E", "3 75G", "5 67H"],
+        6: ["1 103F", "3 127B", "5 147H", "7 111A", "9 015", "11 155E", "21 007"],
+        7: ["1 211E", "3 217E", "5 235E", "7 367H", "9 277E", "11 325G", "13 203F", "19 313H", "21 345G"],
+        8: ["1 433E", "3 567B", "5 763D", "7 551E", "9 675C", "11 747H", "13 453F", "15 727D", "17 023", "19 545E", "21 613D", "23 543F", "25 433B", "27 477B", "37 537F", "43 703H", "45 471A", "51 037", "85 007"],
         9: ["1 1021E", "3 1067F", "5 1461G", "7 1231A", "9 1423G", "11 1055E", "13 1076F", "15 1461G", "17 1231A", "19 1577C", "21 1056", "23 1039F", "25 1743H", "27 1533H", "29 1361F", "31 1056", "33 1756", "35 1769H", "37 537F", "39 1257E", "41 1351F", "43 1242H", "45 671A"],
         10: ["1 2015A", "3 2017A", "5 2415E", "7 3771G", "9 2257E", "11 2095A", "13 2056E", "15 2447F", "17 4102G", "19 3355G", "21 2045G", "23 4136H", "25 3253G", "27 3647G", "29 2064H", "31 3431A", "33 3615H", "35 3535E", "37 4457H", "39 2059G", "41 1063A", "43 5455A", "45 5517H", "47 4463G", "49 3537H", "51 2256G", "53 2027A", "55 3037F", "57 2436E", "59 4023A", "61 3427H", "63 3243H", "65 5155F", "67 3636A", "69 1769A", "71 2516E", "73 2063E", "75 1234E", "77 4423G", "79 2267F", "81 2174F", "83 3143A", "85 2627E", "87 5173G", "89 2433E", "91 5533F", "93 1243A", "95 2145H", "97 3124E", "99 1205E", "101 5361E", "103 1373A", "105 3721G", "107 4155A", "109 1235A", "111 4353E", "113 1063G", "115 1245G", "117 1367H", "119 4513A", "121 5537A", "123 1247A", "125 1036A", "127 1343A"],
         11: ["1 4005E", "3 4445E", "5 4215E", "7 4015E", "9 6015G", "11 7413H", "13 4143F", "15 4636F", "17 4035H", "19 5623F", "21 5623F", "23 4757B", "25 577B", "27 1237H", "29 5633F", "31 5317E", "33 4505E", "35 5273F", "37 4467F", "39 5317E", "41 5617E", "43 5056F", "45 3756E", "47 4455F", "49 4767F", "51 5265F", "53 6235F", "55 3756E", "57 4137H", "59 4533F", "61 6316E", "63 4757B", "65 3265G", "67 7116G", "69 7077H", "71 5265E", "73 4757B", "75 3717H", "77 6235F", "79 7117E", "81 7105E", "83 7315E", "85 5505E", "87 5265E", "89 5346A", "91 4767F", "93 4215E", "95 4567E", "97 5255E", "99 6157E", "101 4251E", "103 5405E", "105 7046E", "107 4757A", "109 4375H", "111 4713F", "113 4707F"],
@@ -93,15 +123,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const matrixSizeInput = document.getElementById("matrixSize");
     const polynomialSelect = document.getElementById("polynomialSelect");
+    const initialStateInput = document.getElementById("initialState");
+    const calculateButton = document.getElementById("calculateButton");
+    const structureMatrixDiv = document.getElementById("structureMatrix");
+    const invertedMatrixDiv = document.getElementById("invertedMatrix");
+    const generatorStateDiv = document.getElementById("generatorState");
 
     function updatePolynomialOptions() {
         const size = parseInt(matrixSizeInput.value);
         const polynomialsForSize = polynomials[size] || [];
         
-        // Очистим текущие опции
         polynomialSelect.innerHTML = '';
 
-        // Добавим новые опции
         polynomialsForSize.forEach(poly => {
             const option = document.createElement("option");
             option.value = poly;
@@ -110,6 +143,92 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    function parsePolynomial(poly) {
+        const terms = poly.split(' ').map(term => parseInt(term, 16));
+        return terms;
+    }
+
+    function createMatrix(poly, size) {
+        const matrix = Array(size).fill(null).map(() => Array(size).fill(0));
+        poly.forEach((term, index) => {
+            matrix[0][index] = term;
+        });
+        for (let i = 1; i < size; i++) {
+            matrix[i][i - 1] = 1;
+        }
+        return matrix;
+    }
+
+    function invertMatrix(matrix) {
+        const size = matrix.length;
+        const identity = Array(size).fill(null).map((_, i) => Array(size).fill(0).map((_, j) => i === j ? 1 : 0));
+        const augmented = matrix.map((row, i) => [...row, ...identity[i]]);
+
+        for (let i = 0; i < size; i++) {
+            let maxRow = i;
+            for (let k = i + 1; k < size; k++) {
+                if (Math.abs(augmented[k][i]) > Math.abs(augmented[maxRow][i])) {
+                    maxRow = k;
+                }
+            }
+            [augmented[i], augmented[maxRow]] = [augmented[maxRow], augmented[i]];
+
+            const pivot = augmented[i][i];
+            for (let j = 0; j < 2 * size; j++) {
+                augmented[i][j] /= pivot;
+            }
+
+            for (let k = 0; k < size; k++) {
+                if (k === i) continue;
+                const factor = augmented[k][i];
+                for (let j = 0; j < 2 * size; j++) {
+                    augmented[k][j] -= factor * augmented[i][j];
+                }
+            }
+        }
+
+        return augmented.map(row => row.slice(size));
+    }
+
+    function multiplyMatrixVector(matrix, vector) {
+        return matrix.map(row => row.reduce((sum, value, index) => sum + value * vector[index], 0));
+    }
+
+    function calculateGeneratorState(initialState, matrix) {
+        const stateVector = initialState.map(Number);
+        return multiplyMatrixVector(matrix, stateVector);
+    }
+
+    function displayMatrix(matrix, container) {
+        container.innerHTML = '';
+        const table = document.createElement("table");
+        matrix.forEach(row => {
+            const tr = document.createElement("tr");
+            row.forEach(cell => {
+                const td = document.createElement("td");
+                td.textContent = cell;
+                tr.appendChild(td);
+            });
+            table.appendChild(tr);
+        });
+        container.appendChild(table);
+    }
+
+    calculateButton.addEventListener("click", () => {
+        const size = parseInt(matrixSizeInput.value);
+        const polynomial = polynomialSelect.value;
+        const initialState = initialStateInput.value.split('').map(Number);
+
+        const parsedPolynomial = parsePolynomial(polynomial);
+        const structureMatrix = createMatrix(parsedPolynomial, size);
+        const invertedMatrix = invertMatrix(structureMatrix);
+        const generatorState = calculateGeneratorState(initialState, structureMatrix);
+
+        displayMatrix(structureMatrix, structureMatrixDiv);
+        displayMatrix(invertedMatrix, invertedMatrixDiv);
+        displayMatrix([generatorState], generatorStateDiv);
+    });
+
     matrixSizeInput.addEventListener("input", updatePolynomialOptions);
-    updatePolynomialOptions(); // Начальное обновление
+    updatePolynomialOptions();
 });
