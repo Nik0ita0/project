@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Matrix Generator</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="111.js" defer></script>
 </head>
 <body>
     <header>
-        <h1>Sequence</h1>
         <nav>
             <ul>
                 <li><a href="Lbs.html" class="button">Лінійна</a></li>
@@ -17,21 +18,59 @@
         </nav>
     </header>
     <div class="container">
-        <h2>Matrix Generator</h2>
-        <form id="matrixForm">
-            <label for="matrixSize">Matrix Size:</label>
-            <input type="number" id="matrixSize" name="matrixSize" value="10" min="1">
-            <label for="modulus">Modulus:</label>
-            <input type="number" id="modulus" name="modulus" value="7" min="1">
-            <button type="button" onclick="generateMatrices()">Generate</button>
-        </form>
-        <div id="matricesContainer">
-            <h3>Structural Matrix</h3>
-            <table id="structuralMatrix"></table>
-            <h3>Inverse Structural Matrix</h3>
-            <table id="inverseStructuralMatrix"></table>
-        </div>
+        <main>
+            <div class="input-section">
+                <label for="degree">Matrix Size (Степень)</label>
+                <input type="number" id="degree" value="3" min="1" max="15">
+
+                <label for="polynomial">Полином</label>
+                <select id="polynomial">
+                    <option value="1 23F">1 23F</option>
+                    <option value="3 37D">3 37D</option>
+                    <!-- Add more polynomial options as needed -->
+                </select>
+
+                <label for="initialState">Initial State</label>
+                <input type="text" id="initialState" value="1">
+
+                <button id="generateButton" class="button">Calculate</button>
+            </div>
+            <div class="matrix-section">
+                <h3>Матрица A</h3>
+                <div class="matrix" id="matrixA"></div>
+                <h3>Матрица B</h3>
+                <div class="matrix" id="matrixB"></div>
+                <h3>Обратная матрица A</h3>
+                <div class="matrix" id="inverseMatrixA"></div>
+                <h3>Обратная матрица B</h3>
+                <div class="matrix" id="inverseMatrixB"></div>
+            </div>
+            <div class="sequence-section">
+                <label for="sequence">Последовательность</label>
+                <input type="text" id="sequence" readonly>
+                
+                <label for="binarySequence">Бинарная последовательность</label>
+                <input type="text" id="binarySequence" readonly>
+            </div>
+            <div class="results-section">
+                <div class="result">
+                    <h3>Реальный период</h3>
+                    <p id="realPeriod">1023</p>
+                </div>
+                <div class="result">
+                    <h3>Теоретический период</h3>
+                    <p id="theoreticalPeriod">1023</p>
+                </div>
+                <div class="result">
+                    <h3>Вес Хэмминга</h3>
+                    <p id="hammingWeight">512</p>
+                </div>
+                <div class="result">
+                    <h3>Полином</h3>
+                    <p id="polynomialDisplay">1 23F</p>
+                </div>
+            </div>
+        </main>
     </div>
-    <script src="111.js"></script>
 </body>
 </html>
