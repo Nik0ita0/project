@@ -34,6 +34,11 @@ function generateMatrices() {
     document.getElementById('hammingWeight').textContent = hammingWeight;
     document.getElementById('polynomialDisplay').textContent = polynomial;
 
+    // Display additional fields
+    document.getElementById('polynomialA').textContent = polynomial; // Assuming polynomial A is the same as selected polynomial
+    document.getElementById('polynomialB').textContent = polynomial; // Assuming polynomial B is the same as selected polynomial
+    document.getElementById('periodA').textContent = realPeriod; // Assuming Period T(A) is the real period calculated
+
     drawChart(sequence);
 }
 
@@ -112,6 +117,38 @@ function calculateHammingWeight(binarySequence) {
 
 function drawChart(sequence) {
     // Implementation for drawing the chart
-    // Placeholder example:
-    console.log('Drawing chart for sequence:', sequence);
+    const ctx = document.getElementById('acfChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: sequence.map((_, index) => index + 1),
+            datasets: [{
+                label: 'ACF',
+                data: sequence,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                fill: false,
+                lineTension: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Index'
+                    }
+                },
+                y: {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'Value'
+                    }
+                }
+            }
+        }
+    });
 }
