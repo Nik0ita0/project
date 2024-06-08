@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matrix Generator</title>
+    <title>Генератор матриц</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.0.0/math.min.js" defer></script>
     <script src="111.js" defer></script>
 </head>
 <body>
@@ -20,34 +21,29 @@
     <div class="container">
         <main>
             <div class="input-section">
-                <label for="degree">Matrix Size (Степень)</label>
+                <label for="degree">Размер матрицы (Степень)</label>
                 <input type="number" id="degree" value="3" min="1" max="15">
-
-                <label for="degree2">Additional Matrix Size (Степень 2)</label>
+                <label for="degree2">Дополнительный размер матрицы (Степень 2)</label>
                 <input type="number" id="degree2" value="3" min="1" max="15">
-
                 <label for="polynomial">Полином</label>
-                <select id="polynomial">
-                    <option value="1 23F">1 23F</option>
-                    <option value="3 37D">3 37D</option>
-                    <!-- Add more polynomial options as needed -->
-                </select>
-
-                <label for="initialState">Initial State</label>
+                <select id="polynomial"></select>
+                <label for="initialState">Начальное состояние</label>
                 <input type="text" id="initialState" value="1">
-
-                <button id="generateButton" class="button">Calculate</button>
+                <button id="generateButton" class="button">Рассчитать</button>
             </div>
             <div class="matrix-section">
+                <h3>Матрица A</h3>
                 <div class="matrix" id="matrixA"></div>
+                <h3>Матрица B</h3>
                 <div class="matrix" id="matrixB"></div>
+                <h3>Обратная матрица A</h3>
                 <div class="matrix" id="inverseMatrixA"></div>
+                <h3>Обратная матрица B</h3>
                 <div class="matrix" id="inverseMatrixB"></div>
             </div>
             <div class="sequence-section">
                 <label for="sequence">Последовательность</label>
                 <input type="text" id="sequence" readonly>
-                
                 <label for="binarySequence">Бинарная последовательность</label>
                 <input type="text" id="binarySequence" readonly>
             </div>
