@@ -82,11 +82,28 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function inverseMatrix(matrix) {
         try {
-            return math.inv(matrix);
+            const invMatrix = math.inv(matrix);
+            return invMatrix.map(row => row.map(cell => Math.round(cell)));
         } catch (error) {
             console.error("Не удалось инвертировать матрицу: ", error);
             return null;
         }
+    }
+
+    function generateSequence(length) {
+        const sequence = [];
+        for (let i = 0; i < length; i++) {
+            sequence.push(Math.floor(Math.random() * 3) - 1); // Генерация целых чисел -1, 0, 1
+        }
+        return sequence;
+    }
+
+    function generateBinarySequence(length) {
+        const binarySequence = [];
+        for (let i = 0; i < length; i++) {
+            binarySequence.push(Math.floor(Math.random() * 2)); // Генерация целых чисел 0 или 1
+        }
+        return binarySequence;
     }
 
     function calculate() {
@@ -114,8 +131,11 @@ document.addEventListener('DOMContentLoaded', function() {
             inverseMatrixBContainer.innerHTML = 'Обратная матрица B не существует';
         }
 
-        sequenceInput.value = `Последовательность для ${selectedPolynomial}`;
-        binarySequenceInput.value = `Бинарная последовательность для ${selectedPolynomial}`;
+        const sequence = generateSequence(10); // Пример длины последовательности 10
+        const binarySequence = generateBinarySequence(10); // Пример длины бинарной последовательности 10
+
+        sequenceInput.value = sequence.join(', ');
+        binarySequenceInput.value = binarySequence.join(', ');
         polynomialAOutput.textContent = selectedPolynomial;
         polynomialBOutput.textContent = selectedPolynomial;
         periodAOutput.textContent = "1023";  // Пример значения
