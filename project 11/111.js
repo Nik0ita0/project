@@ -8,6 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const polynomialAOutput = document.getElementById('polynomialA');
     const polynomialBOutput = document.getElementById('polynomialB');
     const periodAOutput = document.getElementById('periodA');
+    const periodBOutput = document.getElementById('periodB');
     const theoreticalPeriodOutput = document.getElementById('theoreticalPeriod');
     const realPeriodOutput = document.getElementById('realPeriod');
     const hammingWeightOutput = document.getElementById('hammingWeight');
@@ -16,6 +17,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const matrixBContainer = document.getElementById('matrixB');
     const inverseMatrixAContainer = document.getElementById('inverseMatrixA');
     const inverseMatrixBContainer = document.getElementById('inverseMatrixB');
+    const acfChartContainer = document.getElementById('acfChart');
+
+    let acfChart;
 
     const polynomials = {
         1: ["1 103F"],
@@ -106,6 +110,77 @@ document.addEventListener('DOMContentLoaded', function() {
         return binarySequence;
     }
 
+    function calculateACF(sequence) {
+        const n = sequence.length;
+        const mean = sequence.reduce((sum, value) => sum + value, 0) / n;
+        const acf = [];
+        
+        for (let lag = 0; lag < n; lag++) {
+            let sum = 0;
+            for (let i = 0; i < n - lag; i++) {
+                sum += (sequence[i] - mean) * (sequence[i + lag] - mean);
+            }
+            acf.push(sum / n);
+        }
+        
+        return acf;
+    }
+
+    function plotACF(acf) {
+        const labels = acf.map((_, index) => index);
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'АЦФ',
+                data: acf,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                fill: false,
+                tension: 0.1
+            }]
+        };
+
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Лаг'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Значение АЦФ'
+                        }
+                    }
+                }
+            }
+        };
+
+        if (acfChart) {
+            acfChart.destroy();
+        }
+
+        acfChart = new Chart(acfChartContainer, config);
+    }
+
+    function calculatePolynomial(matrix) {
+        return matrix.map(row => row.join(',')).join(',');
+    }
+
+    function calculatePeriod(matrix) {
+        return matrix.length * matrix[0].length;
+    }
+
+    function calculateHammingWeight(sequence) {
+        return sequence.reduce((sum, value) => sum + Math.abs(value), 0);
+    }
+
     function calculate() {
         const selectedPolynomial = polynomialSelect.value;
         const degree = parseInt(degreeInput.value);
@@ -136,12 +211,25 @@ document.addEventListener('DOMContentLoaded', function() {
 
         sequenceInput.value = sequence.join(', ');
         binarySequenceInput.value = binarySequence.join(', ');
-        polynomialAOutput.textContent = selectedPolynomial;
-        polynomialBOutput.textContent = selectedPolynomial;
-        periodAOutput.textContent = "1023";  // Пример значения
-        theoreticalPeriodOutput.textContent = "1023";  // Пример значения
-        realPeriodOutput.textContent = "1023";  // Пример значения
-        hammingWeightOutput.textContent = "512";  // Пример значения
+
+        const polynomialA = calculatePolynomial(matrixA);
+        const polynomialB = calculatePolynomial(matrixB);
+        const periodA = calculatePeriod(matrixA);
+        const periodB = calculatePeriod(matrixB);
+        const theoreticalPeriod = periodA * periodB; // Пример вычисления
+        const realPeriod = periodA * periodB; // Пример вычисления
+        const hammingWeight = calculateHammingWeight(sequence);
+
+        polynomialAOutput.textContent = polynomialA;
+        polynomialBOutput.textContent = polynomialB;
+        periodAOutput.textContent = periodA;
+        periodBOutput.textContent = periodB;
+        theoreticalPeriodOutput.textContent = theoreticalPeriod;
+        realPeriodOutput.textContent = realPeriod;
+        hammingWeightOutput.textContent = hammingWeight;
+
+        const acf = calculateACF(sequence);
+        plotACF(acf);
     }
 
     degreeInput.addEventListener('input', updatePolynomials);
