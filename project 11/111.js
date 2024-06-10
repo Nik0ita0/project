@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const degreeInput = document.getElementById('degree');
     const degree2Input = document.getElementById('degree2');
     const polynomialSelect = document.getElementById('polynomial');
@@ -69,8 +69,8 @@ document.addEventListener('DOMContentLoaded', function() {
         return matrix;
     }
 
-    function displayMatrix(matrix, container) {
-        container.innerHTML = '';
+    function displayMatrix(matrix, container, title) {
+        container.innerHTML = `<h3>${title}</h3>`;
         matrix.forEach(row => {
             const rowDiv = document.createElement('div');
             rowDiv.classList.add('matrix-row');
@@ -126,12 +126,28 @@ document.addEventListener('DOMContentLoaded', function() {
         return acf;
     }
 
+    function calculatePeriodicACF(sequence) {
+        const n = sequence.length;
+        const mean = sequence.reduce((sum, value) => sum + value, 0) / n;
+        const acf = [];
+        
+        for (let lag = 0; lag < n; lag++) {
+            let sum = 0;
+            for (let i = 0; i < n; i++) {
+                sum += (sequence[i] - mean) * (sequence[(i + lag) % n] - mean);
+            }
+            acf.push(sum / n);
+        }
+        
+        return acf;
+    }
+
     function plotACF(acf) {
         const labels = acf.map((_, index) => index);
         const data = {
             labels: labels,
             datasets: [{
-                label: 'АЦФ',
+                label: 'Периодическая АЦФ',
                 data: acf,
                 borderColor: 'rgba(75, 192, 192, 1)',
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -191,19 +207,19 @@ document.addEventListener('DOMContentLoaded', function() {
         const inverseMatrixA = inverseMatrix(matrixA);
         const inverseMatrixB = inverseMatrix(matrixB);
 
-        displayMatrix(matrixA, matrixAContainer);
-        displayMatrix(matrixB, matrixBContainer);
+        displayMatrix(matrixA, matrixAContainer, 'Матрица A');
+        displayMatrix(matrixB, matrixBContainer, 'Матрица B');
 
         if (inverseMatrixA) {
-            displayMatrix(inverseMatrixA, inverseMatrixAContainer);
+            displayMatrix(inverseMatrixA, inverseMatrixAContainer, 'Обратная Матрица A');
         } else {
-            inverseMatrixAContainer.innerHTML = 'Обратная матрица A не существует';
+            inverseMatrixAContainer.innerHTML = '<h3>Обратная Матрица A</h3><div>Обратная матрица A не существует</div>';
         }
 
         if (inverseMatrixB) {
-            displayMatrix(inverseMatrixB, inverseMatrixBContainer);
+            displayMatrix(inverseMatrixB, inverseMatrixBContainer, 'Обратная Матрица B');
         } else {
-            inverseMatrixBContainer.innerHTML = 'Обратная матрица B не существует';
+            inverseMatrixBContainer.innerHTML = '<h3>Обратная Матрица B</h3><div>Обратная матрица B не существует</div>';
         }
 
         const sequence = generateSequence(10); // Пример длины последовательности 10
@@ -228,8 +244,8 @@ document.addEventListener('DOMContentLoaded', function() {
         realPeriodOutput.textContent = realPeriod;
         hammingWeightOutput.textContent = hammingWeight;
 
-        const acf = calculateACF(sequence);
-        plotACF(acf);
+        const periodicAcf = calculatePeriodicACF(sequence);
+        plotACF(periodicAcf);
     }
 
     degreeInput.addEventListener('input', updatePolynomials);
