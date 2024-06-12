@@ -232,3 +232,63 @@ document.addEventListener("DOMContentLoaded", function () {
     matrixSizeInput.addEventListener("input", updatePolynomialOptions);
     updatePolynomialOptions();
 });
+
+
+function calculatePeriodicACF(sequence) {
+    const n = sequence.length;
+    const mean = sequence.reduce((sum, value) => sum + value, 0) / n;
+    const acf = [];
+    
+    for (let lag = 0; lag < n; lag++) {
+        let sum = 0;
+        for (let i = 0; i < n; i++) {
+            sum += (sequence[i] - mean) * (sequence[(i + lag) % n] - mean);
+        }
+        acf.push(sum / n);
+    }
+    
+    return acf;
+}
+
+function plotACF(acf) {
+    const labels = acf.map((_, index) => index);
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Периодическая АЦФ',
+            data: acf,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+            fill: false,
+            tension: 0.1
+        }]
+    };
+
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Лаг'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Значение АЦФ'
+                    }
+                }
+            }
+        }
+    };
+
+    if (acfChart) {
+        acfChart.destroy();
+    }
+
+    acfChart = new Chart(acfChartContainer, config);
+}
