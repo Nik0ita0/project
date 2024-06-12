@@ -19,29 +19,26 @@
     <div class="container">
         <main>
             <div class="input-section">
-
-                    <label for="matrixSize">Matrix Size (Степень)</label>
-                    <input type="number" id="matrixSize" value="3" min="1" max="15">
-
-                    <label for="polynomialSelect">Полином</label>
-                    <select id="polynomialSelect">
-                    </select>
-
-                    <label for="initialState">Initial State</label>
-                    <input type="text" id="initialState" value="1">
-                    
-                    <button id="calculateButton" class="button">Calculate</button>
+                <label for="matrixSize">Matrix Size (Степень)</label>
+                <input type="number" id="matrixSize" value="3" min="1" max="15">
+                
+                <label for="polynomialSelect">Полином</label>
+                <select id="polynomialSelect"></select>
+                
+                <label for="initialState">Initial State</label>
+                <input type="text" id="initialState" value="1">
+                
+                <button id="calculateButton" class="button">Calculate</button>
             </div>
             <div class="matrix-section">
                 <h3>Structure Matrix</h3>
                 <div class="matrix" id="structureMatrix"></div>
                 
                 <h3>Inverted Structure Matrix</h3>
-                <div class="matrix" id="invertedMatrix">
-                </div>
+                <div class="matrix" id="invertedMatrix"></div>
+                
                 <h3>Generator State</h3>
-                <div class="matrix" id="generatorState">
-                </div>
+                <div class="matrix" id="generatorState"></div>
             </div>
             <div class="sequence-section">
                 <label for="sequence">Sequence</label>
@@ -73,7 +70,6 @@
                 <canvas id="acfChart"></canvas>
             </div>
         </main>
-    </div>
     </div>
 </body>
 </html>
