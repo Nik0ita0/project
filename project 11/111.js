@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let i = 0; i < size; i++) {
             matrix[i] = [];
             for (let j = 0; j < size; j++) {
-                matrix[i][j] = Math.floor(Math.random() * 10);
+                matrix[i][j] = Math.floor(Math.random() * 3) - 1; // Генерация -1, 0, 1
             }
         }
         return matrix;
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function inverseMatrix(matrix) {
         try {
             const invMatrix = math.inv(matrix);
-            return invMatrix.map(row => row.map(cell => Math.round(cell)));
+            return invMatrix.map(row => row.map(cell => parseFloat(cell.toFixed(2))));
         } catch (error) {
             console.error("Не удалось инвертировать матрицу: ", error);
             return null;
@@ -186,7 +186,14 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function calculatePolynomial(matrix) {
-        return matrix.map(row => row.join(',')).join(',');
+        return matrix.map((row, rowIndex) => 
+            row.map((cell, colIndex) => {
+                if (cell !== 0) {
+                    return `${cell > 0 && colIndex > 0 ? '+' : ''}${cell === 1 ? '' : cell}${colIndex === 0 ? '' : `x^${colIndex}`}`;
+                }
+                return '';
+            }).join('')
+        ).join('');
     }
 
     function calculatePeriod(matrix) {
