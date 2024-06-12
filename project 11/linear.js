@@ -1,106 +1,104 @@
-document.getElementById('calculateButton').addEventListener('click', function() {
-    let matrixSize = parseInt(document.getElementById('matrixSize').value);
-    let initialState = document.getElementById('initialState').value.split('').map(Number);
-
-    if (isNaN(matrixSize) || matrixSize <= 0) {
-        alert("Введите корректный размер матрицы.");
-        return;
-    }
-
-    if (initialState.some(isNaN)) {
-        alert("Введите корректное начальное состояние.");
-        return;
-    }
-
-    function parsePolynomial(poly) {
-        return poly.split(' ').map(term => parseInt(term, 16));
-    }
-
-    function createMatrix(poly, size) {
-        const matrix = Array(size).fill(null).map(() => Array(size).fill(0));
-        poly.forEach((term, index) => {
-            if (index < size) matrix[0][index] = term;
-        });
-        for (let i = 1; i < size; i++) {
-            matrix[i][i - 1] = 1;
-        }
-        return matrix;
-    }
-
-    function invertMatrix(matrix) {
-        const size = matrix.length;
-        const identity = Array(size).fill(null).map((_, i) => Array(size).fill(0).map((_, j) => i === j ? 1 : 0));
-        const augmented = matrix.map((row, i) => [...row, ...identity[i]]);
-
-        for (let i = 0; i < size; i++) {
-            let maxRow = i;
-            for (let k = i + 1; k < size; k++) {
-                if (Math.abs(augmented[k][i]) > Math.abs(augmented[maxRow][i])) {
-                    maxRow = k;
-                }
-            }
-            [augmented[i], augmented[maxRow]] = [augmented[maxRow], augmented[i]];
-
-            const pivot = augmented[i][i];
-            if (pivot === 0) {
-                alert("Матрица не является обратимой.");
-                return null;
-            }
-            for (let j = 0; j < 2 * size; j++) {
-                augmented[i][j] /= pivot;
-            }
-
-            for (let k = 0; k < size; k++) {
-                if (k === i) continue;
-                const factor = augmented[k][i];
-                for (let j = 0; j < 2 * size; j++) {
-                    augmented[k][j] -= factor * augmented[i][j];
-                }
-            }
-        }
-
-        return augmented.map(row => row.slice(size));
-    }
-
-    function multiplyMatrixVector(matrix, vector) {
-        return matrix.map(row => row.reduce((sum, value, index) => sum + value * vector[index], 0));
-    }
-
-    function calculateGeneratorState(initialState, matrix) {
-        const stateVector = initialState.map(Number);
-        return multiplyMatrixVector(matrix, stateVector);
-    }
-
-    function displayMatrix(matrix, container) {
-        container.innerHTML = '';
-        const table = document.createElement("table");
-        matrix.forEach(row => {
-            const tr = document.createElement("tr");
-            row.forEach(cell => {
-                const td = document.createElement("td");
-                td.textContent = cell;
-                tr.appendChild(td);
-            });
-            table.appendChild(tr);
-        });
-        container.appendChild(table);
-    }
-
-    const polynomial = document.getElementById('polynomialSelect').value;
-    const parsedPolynomial = parsePolynomial(polynomial);
-    const structureMatrix = createMatrix(parsedPolynomial, matrixSize);
+document.getElementById("calculateButton").addEventListener("click", function() {
+    const matrixSize = parseInt(document.getElementById("matrixSize").value);
+    const polynomial = document.getElementById("polynomialSelect").value;
+    const initialState = document.getElementById("initialState").value.split('').map(Number);
+    
+    // Вычисление структурной матрицы
+    const structureMatrix = calculateStructureMatrix(matrixSize, polynomial);
+    displayMatrix(structureMatrix, "structureMatrix");
+    
+    // Вычисление обратной структурной матрицы
     const invertedMatrix = invertMatrix(structureMatrix);
+    displayMatrix(invertedMatrix, "invertedMatrix");
+    
+    // Вычисление генераторного состояния
+    const generatorState = calculateGeneratorState(initialState, structureMatrix);
+    displayMatrix([generatorState], "generatorState");
+});
 
-    if (invertedMatrix === null) {
-        return;
+function parsePolynomial(polynomial) {
+    // Парсинг полинома в массив коэффициентов
+    let terms = polynomial.split('+').map(term => term.trim());
+    let degree = parseInt(terms[0].match(/\d+/)[0]);
+    let coeffs = Array(degree + 1).fill(0);
+    terms.forEach(term => {
+        if (term.includes('x')) {
+            let exp = term.includes('^') ? parseInt(term.split('^')[1]) : 1;
+            coeffs[degree - exp] = 1;
+        } else {
+            coeffs[degree] = 1;
+        }
+    });
+    return coeffs;
+}
+
+function calculateStructureMatrix(matrixSize, polynomial) {
+    let matrix = Array.from({ length: matrixSize }, () => Array(matrixSize).fill(0));
+    let polyCoeffs = parsePolynomial(polynomial);
+    
+    for (let i = 0; i < matrixSize; i++) {
+        for (let j = 0; j < matrixSize; j++) {
+            if (j === (i + 1) % matrixSize) {
+                matrix[i][j] = 1;
+            } else if (i === matrixSize - 1) {
+                matrix[i][j] = polyCoeffs[matrixSize - 1 - j];
+            }
+        }
+    }
+    return matrix;
+}
+
+function invertMatrix(matrix) {
+    let n = matrix.length;
+    let augmented = matrix.map((row, i) => [...row, ...Array.from({ length: n }, (_, j) => (i === j ? 1 : 0))]);
+
+    for (let i = 0; i < n; i++) {
+        if (augmented[i][i] === 0) {
+            for (let j = i + 1; j < n; j++) {
+                if (augmented[j][i] === 1) {
+                    [augmented[i], augmented[j]] = [augmented[j], augmented[i]];
+                    break;
+                }
+            }
+        }
+        for (let j = 0; j < n; j++) {
+            if (i !== j && augmented[j][i] === 1) {
+                for (let k = 0; k < 2 * n; k++) {
+                    augmented[j][k] ^= augmented[i][k];
+                }
+            }
+        }
     }
 
-    const generatorState = calculateGeneratorState(initialState, structureMatrix);
+    let inverse = augmented.map(row => row.slice(n));
+    return inverse;
+}
 
-    displayMatrix(structureMatrix, document.getElementById('structureMatrix'));
-    displayMatrix(invertedMatrix, document.getElementById('invertedMatrix'));
-    displayMatrix([generatorState], document.getElementById('generatorState'));
-});
+function calculateGeneratorState(initialState, structureMatrix) {
+    let state = Array(structureMatrix.length).fill(0);
+    for (let i = 0; i < structureMatrix.length; i++) {
+        for (let j = 0; j < structureMatrix.length; j++) {
+            state[i] ^= structureMatrix[i][j] * initialState[j];
+        }
+    }
+    return state;
+}
+
+function displayMatrix(matrix, elementId) {
+    const matrixElement = document.getElementById(elementId);
+    matrixElement.innerHTML = '';
+    matrix.forEach(row => {
+        let rowElement = document.createElement('div');
+        rowElement.classList.add('matrix-row');
+        row.forEach(cell => {
+            let cellElement = document.createElement('div');
+            cellElement.classList.add('matrix-cell');
+            cellElement.textContent = cell;
+            rowElement.appendChild(cellElement);
+        });
+        matrixElement.appendChild(rowElement);
+    });
+}
 
 document.addEventListener("DOMContentLoaded", function () {
     const polynomials = {
@@ -125,9 +123,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const polynomialSelect = document.getElementById("polynomialSelect");
     const initialStateInput = document.getElementById("initialState");
     const calculateButton = document.getElementById("calculateButton");
-    const structureMatrixDiv = document.getElementById("structureMatrix");
-    const invertedMatrixDiv = document.getElementById("invertedMatrix");
-    const generatorStateDiv = document.getElementById("generatorState");
 
     function updatePolynomialOptions() {
         const size = parseInt(matrixSizeInput.value);
@@ -143,152 +138,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function parsePolynomial(poly) {
-        const terms = poly.split(' ').map(term => parseInt(term, 16));
-        return terms;
-    }
-
-    function createMatrix(poly, size) {
-        const matrix = Array(size).fill(null).map(() => Array(size).fill(0));
-        poly.forEach((term, index) => {
-            matrix[0][index] = term;
-        });
-        for (let i = 1; i < size; i++) {
-            matrix[i][i - 1] = 1;
-        }
-        return matrix;
-    }
-
-    function invertMatrix(matrix) {
-        const size = matrix.length;
-        const identity = Array(size).fill(null).map((_, i) => Array(size).fill(0).map((_, j) => i === j ? 1 : 0));
-        const augmented = matrix.map((row, i) => [...row, ...identity[i]]);
-
-        for (let i = 0; i < size; i++) {
-            let maxRow = i;
-            for (let k = i + 1; k < size; k++) {
-                if (Math.abs(augmented[k][i]) > Math.abs(augmented[maxRow][i])) {
-                    maxRow = k;
-                }
-            }
-            [augmented[i], augmented[maxRow]] = [augmented[maxRow], augmented[i]];
-
-            const pivot = augmented[i][i];
-            for (let j = 0; j < 2 * size; j++) {
-                augmented[i][j] /= pivot;
-            }
-
-            for (let k = 0; k < size; k++) {
-                if (k === i) continue;
-                const factor = augmented[k][i];
-                for (let j = 0; j < 2 * size; j++) {
-                    augmented[k][j] -= factor * augmented[i][j];
-                }
-            }
-        }
-
-        return augmented.map(row => row.slice(size));
-    }
-
-    function multiplyMatrixVector(matrix, vector) {
-        return matrix.map(row => row.reduce((sum, value, index) => sum + value * vector[index], 0));
-    }
-
-    function calculateGeneratorState(initialState, matrix) {
-        const stateVector = initialState.map(Number);
-        return multiplyMatrixVector(matrix, stateVector);
-    }
-
-    function displayMatrix(matrix, container) {
-        container.innerHTML = '';
-        const table = document.createElement("table");
-        matrix.forEach(row => {
-            const tr = document.createElement("tr");
-            row.forEach(cell => {
-                const td = document.createElement("td");
-                td.textContent = cell;
-                tr.appendChild(td);
-            });
-            table.appendChild(tr);
-        });
-        container.appendChild(table);
-    }
-
-    calculateButton.addEventListener("click", () => {
-        const size = parseInt(matrixSizeInput.value);
-        const polynomial = polynomialSelect.value;
-        const initialState = initialStateInput.value.split('').map(Number);
-
-        const parsedPolynomial = parsePolynomial(polynomial);
-        const structureMatrix = createMatrix(parsedPolynomial, size);
-        const invertedMatrix = invertMatrix(structureMatrix);
-        const generatorState = calculateGeneratorState(initialState, structureMatrix);
-
-        displayMatrix(structureMatrix, structureMatrixDiv);
-        displayMatrix(invertedMatrix, invertedMatrixDiv);
-        displayMatrix([generatorState], generatorStateDiv);
-    });
-
     matrixSizeInput.addEventListener("input", updatePolynomialOptions);
     updatePolynomialOptions();
 });
-
-
-function calculatePeriodicACF(sequence) {
-    const n = sequence.length;
-    const mean = sequence.reduce((sum, value) => sum + value, 0) / n;
-    const acf = [];
-    
-    for (let lag = 0; lag < n; lag++) {
-        let sum = 0;
-        for (let i = 0; i < n; i++) {
-            sum += (sequence[i] - mean) * (sequence[(i + lag) % n] - mean);
-        }
-        acf.push(sum / n);
-    }
-    
-    return acf;
-}
-
-function plotACF(acf) {
-    const labels = acf.map((_, index) => index);
-    const data = {
-        labels: labels,
-        datasets: [{
-            label: 'Периодическая АЦФ',
-            data: acf,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            backgroundColor: 'rgba(75, 192, 192, 0.2)',
-            fill: false,
-            tension: 0.1
-        }]
-    };
-
-    const config = {
-        type: 'line',
-        data: data,
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Лаг'
-                    }
-                },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'Значение АЦФ'
-                    }
-                }
-            }
-        }
-    };
-
-    if (acfChart) {
-        acfChart.destroy();
-    }
-
-    acfChart = new Chart(acfChartContainer, config);
-}
