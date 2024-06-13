@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>Дослідження матричного зсувного регістру</title>
+    <link rel="stylesheet" href="style/style.css">
+</head>
+<body>
+    <h1>Дослідження матричного зсувного регістру з матрицею станів над кінцевим полем GF(7)</h1>
+
+    <p>Введіть параметри для дослідження:</p>
+    <form id="matrixForm">
+        <label for="matrixSize">Розмір матриці:</label>
+        <input type="number" id="matrixSize" name="matrixSize" min="2" max="7" required>
+        <br><br>
+        <button type="button" onclick="generateMatrix()">Створити матрицю</button>
+    </form>
+    
+    <div id="matrixInput" style="display:none;">
+        <h2>Введіть елементи матриці (елементи повинні бути в діапазоні 0-6):</h2>
+        <form id="matrixElementsForm"></form>
+        <button type="button" onclick="analyzeMatrix()">Аналізувати матрицю</button>
+    </div>
+
+    <h2>Результати аналізу:</h2>
+    <div id="results"></div>
+
+    <script src="rz1.js"></script>
+</body>
+</html>
