@@ -63,7 +63,29 @@ document.addEventListener('DOMContentLoaded', function () {
         for (let i = 0; i < size; i++) {
             matrix[i] = [];
             for (let j = 0; j < size; j++) {
-                matrix[i][j] = Math.floor(Math.random() * 3) - 1; // Генерация -1, 0, 1
+                matrix[i][j] = Math.floor(Math.random() * 2); // Генерация 0 или 1
+            }
+        }
+        return matrix;
+    }
+
+    function generateInvertibleMatrix(size) {
+        const matrix = [];
+        for (let i = 0; i < size; i++) {
+            matrix[i] = Array(size).fill(0);
+            matrix[i][i] = 1; // создание единичной матрицы
+        }
+
+        // Случайное перемешивание строк и столбцов
+        for (let i = 0; i < size; i++) {
+            const row1 = Math.floor(Math.random() * size);
+            const row2 = Math.floor(Math.random() * size);
+            [matrix[row1], matrix[row2]] = [matrix[row2], matrix[row1]];
+
+            const col1 = Math.floor(Math.random() * size);
+            const col2 = Math.floor(Math.random() * size);
+            for (let j = 0; j < size; j++) {
+                [matrix[j][col1], matrix[j][col2]] = [matrix[j][col2], matrix[j][col1]];
             }
         }
         return matrix;
@@ -84,14 +106,46 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    function inverseMatrix(matrix) {
-        try {
-            const invMatrix = math.inv(matrix);
-            return invMatrix.map(row => row.map(cell => parseFloat(cell.toFixed(2))));
-        } catch (error) {
-            console.error("Не удалось инвертировать матрицу: ", error);
+    function inverseBinaryMatrix(matrix) {
+        // Проверка, если матрица квадратная и имеет единичную диагональ
+        if (!matrix.every((row, i) => row[i] === 1)) {
             return null;
         }
+        
+        // Создание копии матрицы для работы
+        const size = matrix.length;
+        const augmentedMatrix = matrix.map((row, i) => row.concat([...Array(size)].map((_, j) => (i === j ? 1 : 0))));
+
+        // Прямой ход метода Гаусса
+        for (let i = 0; i < size; i++) {
+            // Проверка, если элемент диагонали равен 0, перестановка строк
+            if (augmentedMatrix[i][i] === 0) {
+                let swapped = false;
+                for (let j = i + 1; j < size; j++) {
+                    if (augmentedMatrix[j][i] === 1) {
+                        [augmentedMatrix[i], augmentedMatrix[j]] = [augmentedMatrix[j], augmentedMatrix[i]];
+                        swapped = true;
+                        break;
+                    }
+                }
+                if (!swapped) return null; // Невозможно инвертировать
+            }
+
+            // Приведение строки к единичной матрице
+            for (let j = 0; j < size; j++) {
+                if (i !== j) {
+                    if (augmentedMatrix[j][i] === 1) {
+                        for (let k = 0; k < 2 * size; k++) {
+                            augmentedMatrix[j][k] ^= augmentedMatrix[i][k];
+                        }
+                    }
+                }
+            }
+        }
+
+        // Возвращение обратной матрицы из дополненной матрицы
+        const inverseMatrix = augmentedMatrix.map(row => row.slice(size));
+        return inverseMatrix;
     }
 
     function generateSequence(length) {
@@ -186,14 +240,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function calculatePolynomial(matrix) {
-        return matrix.map((row, rowIndex) => 
-            row.map((cell, colIndex) => {
-                if (cell !== 0) {
-                    return `${cell > 0 && colIndex > 0 ? '+' : ''}${cell === 1 ? '' : cell}${colIndex === 0 ? '' : `x^${colIndex}`}`;
-                }
-                return '';
-            }).join('')
-        ).join('');
+        return matrix.map(row => row.join(',')).join(',');
     }
 
     function calculatePeriod(matrix) {
@@ -209,24 +256,24 @@ document.addEventListener('DOMContentLoaded', function () {
         const degree = parseInt(degreeInput.value);
         const degree2 = parseInt(degree2Input.value);
 
-        const matrixA = generateRandomMatrix(degree);
-        const matrixB = generateRandomMatrix(degree2);
-        const inverseMatrixA = inverseMatrix(matrixA);
-        const inverseMatrixB = inverseMatrix(matrixB);
+        const matrixA = generateInvertibleMatrix(degree);
+        const matrixB = generateInvertibleMatrix(degree2);
+        const inverseMatrixA = inverseBinaryMatrix(matrixA);
+        const inverseMatrixB = inverseBinaryMatrix(matrixB);
 
-        displayMatrix(matrixA, matrixAContainer, 'Матрица A');
-        displayMatrix(matrixB, matrixBContainer, 'Матрица B');
+        displayMatrix(matrixA, matrixAContainer, 'Матриця A');
+        displayMatrix(matrixB, matrixBContainer, 'Матриця B');
 
         if (inverseMatrixA) {
-            displayMatrix(inverseMatrixA, inverseMatrixAContainer, 'Обратная Матрица A');
+            displayMatrix(inverseMatrixA, inverseMatrixAContainer, 'Обернена Матриця A');
         } else {
-            inverseMatrixAContainer.innerHTML = '<h3>Обратная Матрица A</h3><div>Обратная матрица A не существует</div>';
+            inverseMatrixAContainer.innerHTML = '<h3>Обернена Матриця A</h3><div>Обернена матриця A не існує</div>';
         }
 
         if (inverseMatrixB) {
-            displayMatrix(inverseMatrixB, inverseMatrixBContainer, 'Обратная Матрица B');
+            displayMatrix(inverseMatrixB, inverseMatrixBContainer, 'Обернена Матриця B');
         } else {
-            inverseMatrixBContainer.innerHTML = '<h3>Обратная Матрица B</h3><div>Обратная матрица B не существует</div>';
+            inverseMatrixBContainer.innerHTML = '<h3>Обернена Матриця B</h3><div>Обернена матриця B не існує</div>';
         }
 
         const sequence = generateSequence(10); // Пример длины последовательности 10
@@ -253,6 +300,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const periodicAcf = calculatePeriodicACF(sequence);
         plotACF(periodicAcf);
+
+        // Отключаем кнопку после первого нажатия
+        generateButton.disabled = true;
     }
 
     degreeInput.addEventListener('input', updatePolynomials);
