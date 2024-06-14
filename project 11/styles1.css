@@ -1,0 +1,95 @@
+body {
+    background-color: #121212;
+    color: #FFFFFF;
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #1E1E1E;
+    border-radius: 10px;
+}
+
+h1, h2 {
+    color: #CCCCCC;
+}
+
+form {
+    margin-bottom: 20px;
+}
+
+input[type="number"] {
+    margin: 5px;
+    padding: 5px;
+    background-color: #2E2E2E;
+    color: #FFFFFF;
+    border: 1px solid #444444;
+    border-radius: 5px;
+    width: 60px;
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #333333;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #555555;
+}
+
+#results {
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #1E1E1E;
+    border-radius: 5px;
+    border: 1px solid #444444;
+}
+
+.matrix {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+    gap: 10px;
+}
+
+.matrix-element {
+    background-color: #2E2E2E;
+    color: #FFFFFF;
+    padding: 10px;
+    text-align: center;
+    border-radius: 5px;
+    border: 1px solid #444444;
+}
+
+.matrix-element-input {
+    width: 50px;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.nav-buttons li {
+    list-style: none;
+}
+
+.nav-buttons .button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #333333;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.nav-buttons .button:hover {
+    background-color: #555555;
+}
