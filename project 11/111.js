@@ -70,6 +70,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function generateInvertibleMatrix(size) {
+        // Создание случайной инвертируемой матрицы
         const matrix = [];
         for (let i = 0; i < size; i++) {
             matrix[i] = Array(size).fill(0);
@@ -107,12 +108,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function inverseBinaryMatrix(matrix) {
-        // Проверка, если матрица квадратная и имеет единичную диагональ
-        if (!matrix.every((row, i) => row[i] === 1)) {
-            return null;
-        }
-        
-        // Создание копии матрицы для работы
         const size = matrix.length;
         const augmentedMatrix = matrix.map((row, i) => row.concat([...Array(size)].map((_, j) => (i === j ? 1 : 0))));
 
@@ -225,7 +220,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     y: {
                         title: {
                             display: true,
-                            text: 'Значение АЦФ'
+                            text: 'АКФ'
                         }
                     }
                 }
@@ -240,11 +235,36 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function calculatePolynomial(matrix) {
-        return matrix.map(row => row.join(',')).join(',');
+        const polynomials = matrix.map((row, rowIndex) => {
+            return row
+                .map((value, colIndex) => (value === 1 ? `x^${colIndex}` : null))
+                .filter(item => item)
+                .join(' + ');
+        });
+        return polynomials.join(', ');
     }
 
     function calculatePeriod(matrix) {
-        return matrix.length * matrix[0].length;
+        // Поиск периода матрицы
+        function matrixEquals(matrix1, matrix2) {
+            return matrix1.every((row, i) => row.every((value, j) => value === matrix2[i][j]));
+        }
+
+        const initialMatrix = matrix.map(row => row.slice());
+        let currentMatrix = matrix.map(row => row.slice());
+        let period = 0;
+
+        do {
+            period++;
+            currentMatrix = currentMatrix.map(row => row.map(value => value));
+            for (let i = 0; i < currentMatrix.length; i++) {
+                for (let j = 0; j < currentMatrix.length; j++) {
+                    currentMatrix[i][j] ^= initialMatrix[i][j];
+                }
+            }
+        } while (!matrixEquals(currentMatrix, initialMatrix));
+
+        return period;
     }
 
     function calculateHammingWeight(sequence) {

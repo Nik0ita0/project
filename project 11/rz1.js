@@ -1,16 +1,27 @@
+let currentState = [];
+let nextState = [];
+let intervalId;
+let matrixSize;
+let primitivePolynomials = {
+    2: [1, 1, 3],
+    3: [1, 0, 3, 2],
+    4: [1, 0, 3, 0, 5],
+    5: [1, 1, 0, 0, 0, 4],
+    6: [1, 0, 0, 1, 0, 0, 5],
+    7: [1, 0, 0, 0, 0, 0, 2],
+    8: [1, 0, 0, 0, 0, 0, 0, 3],
+};
+
 function generateMatrix() {
-    const matrixSize = document.getElementById('matrixSize').value;
+    matrixSize = document.getElementById('matrixSize').value;
     const matrixForm = document.getElementById('matrixElementsForm');
     matrixForm.innerHTML = '';
 
-    const table = document.createElement('table');
-    table.className = 'matrix';
-
     for (let i = 0; i < matrixSize; i++) {
-        const row = document.createElement('tr');
+        let row = document.createElement('div');
+        row.className = 'matrix';
         for (let j = 0; j < matrixSize; j++) {
-            const cell = document.createElement('td');
-            const input = document.createElement('input');
+            let input = document.createElement('input');
             input.type = 'number';
             input.id = `element_${i}_${j}`;
             input.name = `element_${i}_${j}`;
@@ -18,67 +29,77 @@ function generateMatrix() {
             input.max = 6;
             input.required = true;
             input.className = 'matrix-element-input';
-            cell.appendChild(input);
-            row.appendChild(cell);
+            row.appendChild(input);
         }
-        table.appendChild(row);
+        matrixForm.appendChild(row);
     }
 
-    matrixForm.appendChild(table);
     document.getElementById('matrixInput').style.display = 'block';
 }
 
 function analyzeMatrix() {
-    const matrixSize = document.getElementById('matrixSize').value;
-    let matrix = [];
-
+    currentState = [];
     for (let i = 0; i < matrixSize; i++) {
         let row = [];
         for (let j = 0; j < matrixSize; j++) {
-            const element = document.getElementById(`element_${i}_${j}`).value;
+            let element = document.getElementById(`element_${i}_${j}`).value;
             row.push(parseInt(element));
         }
-        matrix.push(row);
+        currentState.push(row);
     }
 
-    const resultsDiv = document.getElementById('results');
-    resultsDiv.innerHTML = '<h3>Матриця:</h3>';
+    document.getElementById('matrixControl').style.display = 'block';
+    displayMatrix(currentState);
+}
 
-    const table = document.createElement('table');
+function displayMatrix(matrix) {
+    const resultsDiv = document.getElementById('results');
+    resultsDiv.innerHTML = '';
+    const table = document.createElement('div');
     table.className = 'matrix';
 
-    for (let i = 0; i < matrixSize; i++) {
-        const row = document.createElement('tr');
-        for (let j = 0; j < matrixSize; j++) {
-            const cell = document.createElement('td');
+    for (let i = 0; i < matrix.length; i++) {
+        for (let j = 0; j < matrix[i].length; j++) {
+            let cell = document.createElement('div');
             cell.className = 'matrix-element';
+            cell.style.backgroundColor = getColor(matrix[i][j]);
             cell.textContent = matrix[i][j];
-            row.appendChild(cell);
+            table.appendChild(cell);
         }
-        table.appendChild(row);
     }
 
     resultsDiv.appendChild(table);
-
-    const isValid = validateMatrix(matrix);
-    resultsDiv.innerHTML += `<p>Чи є матриця валідною: ${isValid}</p>`;
-
-    const analysisResult = matrixShiftRegisterAnalysis(matrix);
-    resultsDiv.innerHTML += `<p>Результати аналізу: ${analysisResult}</p>`;
 }
 
-function validateMatrix(matrix) {
-    for (let row of matrix) {
-        for (let element of row) {
-            if (element < 0 || element > 6) {
-                return false;
-            }
-        }
-    }
-    return true;
+function getColor(value) {
+    const colors = [
+        '#FF0000', // red
+        '#FF7F00', // orange
+        '#FFFF00', // yellow
+        '#00FF00', // green
+        '#0000FF', // blue
+        '#4B0082', // indigo
+        '#8B00FF'  // violet
+    ];
+    return colors[value];
 }
 
-function matrixShiftRegisterAnalysis(matrix) {
-    const transposeMatrix = matrix[0].map((_, colIndex) => matrix.map(row => row[colIndex]));
-    return JSON.stringify(transposeMatrix, null, 2);
+function nextMatrixState() {
+    nextState = currentState.map((row, rowIndex) =>
+        row.map((cell, colIndex) =>
+            (currentState[(rowIndex + 1) % matrixSize][colIndex] +
+             currentState[rowIndex][(colIndex + 1) % matrixSize]) % 7
+        )
+    );
+    currentState = nextState;
+    displayMatrix(currentState);
+}
+
+function startAutomatic() {
+    const speed = 1000 / document.getElementById('speed').value;
+    intervalId = setInterval(nextMatrixState, speed);
+}
+
+function stepManual() {
+    nextMatrixState();
 }
