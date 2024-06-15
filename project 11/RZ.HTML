@@ -21,6 +21,17 @@
             <label for="matrixSize">Розмір матриці:</label>
             <input type="number" id="matrixSize" name="matrixSize" min="2" max="7" required>
             <br><br>
+            <label for="characteristicPolynomial">Характеристичний поліном:</label>
+            <select id="characteristicPolynomial" name="characteristicPolynomial">
+                <option value="2">GF(7^2) x^2 + x + 3</option>
+                <option value="3">GF(7^3) x^3 + 3*x + 2</option>
+                <option value="4">GF(7^4) x^4 + x^2 + 3*x + 5</option>
+                <option value="5">GF(7^5) x^5 + x + 4</option>
+                <option value="6">GF(7^6) x^6 + x^3 + x + 5</option>
+                <option value="7">GF(7^7) x^7 + x^4 + 2</option>
+                <option value="8">GF(7^8) x^8 + x + 3</option>
+            </select>
+            <br><br>
             <button type="button" onclick="generateMatrix()">Створити матрицю</button>
         </form>
 

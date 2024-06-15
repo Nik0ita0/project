@@ -2,6 +2,7 @@ let currentState = [];
 let nextState = [];
 let intervalId;
 let matrixSize;
+let characteristicPolynomial;
 let primitivePolynomials = {
     2: [1, 1, 3],
     3: [1, 0, 3, 2],
@@ -13,7 +14,8 @@ let primitivePolynomials = {
 };
 
 function generateMatrix() {
-    matrixSize = document.getElementById('matrixSize').value;
+    matrixSize = parseInt(document.getElementById('matrixSize').value);
+    characteristicPolynomial = parseInt(document.getElementById('characteristicPolynomial').value);
     const matrixForm = document.getElementById('matrixElementsForm');
     matrixForm.innerHTML = '';
 
@@ -85,21 +87,38 @@ function getColor(value) {
 }
 
 function nextMatrixState() {
-    nextState = currentState.map((row, rowIndex) =>
-        row.map((cell, colIndex) =>
-            (currentState[(rowIndex + 1) % matrixSize][colIndex] +
-             currentState[rowIndex][(colIndex + 1) % matrixSize]) % 7
-        )
-    );
+    let poly = primitivePolynomials[characteristicPolynomial];
+    nextState = [];
+
+    for (let i = 0; i < matrixSize; i++) {
+        let newRow = [];
+        for (let j = 0; j < matrixSize; j++) {
+            let newValue = 0;
+            for (let k = 0; k < poly.length; k++) {
+                if (poly[k] !== 0) {
+                    let row = (i + k) % matrixSize;
+                    newValue = (newValue + currentState[row][j] * poly[k]) % 7;
+                }
+            }
+            newRow.push(newValue);
+        }
+        nextState.push(newRow);
+    }
+
     currentState = nextState;
     displayMatrix(currentState);
 }
 
 function startAutomatic() {
-    const speed = 1000 / document.getElementById('speed').value;
-    intervalId = setInterval(nextMatrixState, speed);
+    let speed = parseInt(document.getElementById('speed').value);
+    if (intervalId) clearInterval(intervalId);
+    intervalId = setInterval(nextMatrixState, 1000 / speed);
 }
 
 function stepManual() {
     nextMatrixState();
+}
+
+function stopAutomatic() {
+    if (intervalId) clearInterval(intervalId);
 }
